@@ -19,7 +19,9 @@ namespace CarControl {
     }
 
     export function leftTurn(pause: number) {
+        Track.dataForwardEnd()
         lock = false
+         Track.dataLeft()
         mecanumRobot.Motor(LR.Lower_right, MD.Back, speed)
         mecanumRobot.Motor(LR.Upper_right, MD.Forward, speed + 2)
         mecanumRobot.Motor(LR.Lower_left, MD.Back, speed)
@@ -31,7 +33,9 @@ namespace CarControl {
     }
     
     export function rightTurn(pause: number) {
+        Track.dataForwardEnd()
         lock = false
+        Track.dataRight()
         mecanumRobot.Motor(LR.Lower_right, MD.Forward, speed)
         mecanumRobot.Motor(LR.Upper_right, MD.Back, speed + 2)
         mecanumRobot.Motor(LR.Lower_left, MD.Forward, speed)

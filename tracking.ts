@@ -1,7 +1,7 @@
 namespace Track{
 
 
-    let dataArray: Array<string>
+    let dataArray: Array<string> = []
 
     let forwardTime0: number;
     let forwardTime1: number;
@@ -20,15 +20,14 @@ namespace Track{
         dataArray.push(forwardTimeToStr)
     }
 
-    /*
+    
     //udělá z pole string
     export function data(){
         for(let i: number = 0; i < dataArray.length; i++){
-            return dataArray[i] 
+            basic.showString(dataArray[i])
         }
-        return null
     }
-    */
+    
 
 
 
