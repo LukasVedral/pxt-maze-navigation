@@ -1,8 +1,8 @@
 namespace CarControl {
     const speed: number = 80
-    export const turnTime: number = 510
-    export let turning: boolean = false
-    let lock: boolean = false
+    export const turnTime: number = 485
+    export let turning: boolean
+    let lock: boolean
     
 
 
@@ -19,8 +19,10 @@ namespace CarControl {
     }
 
     export function leftTurn(pause: number) {
-        Track.dataForwardEnd()
-        lock = false
+        if(lock){
+            Track.dataForwardEnd()
+            lock = false
+        }
          Track.dataLeft()
         mecanumRobot.Motor(LR.Lower_right, MD.Back, speed)
         mecanumRobot.Motor(LR.Upper_right, MD.Forward, speed + 2)
@@ -33,8 +35,10 @@ namespace CarControl {
     }
     
     export function rightTurn(pause: number) {
-        Track.dataForwardEnd()
-        lock = false
+        if(lock){
+            Track.dataForwardEnd()
+            lock = false
+        }
         Track.dataRight()
         mecanumRobot.Motor(LR.Lower_right, MD.Forward, speed)
         mecanumRobot.Motor(LR.Upper_right, MD.Back, speed + 2)
@@ -47,11 +51,56 @@ namespace CarControl {
     }
 
     export function stop() {
+        if (lock) {
+            Track.dataForwardEnd()
+            lock = false
+        }
         mecanumRobot.Motor(LR.Lower_right, MD.Forward, 0)
         mecanumRobot.Motor(LR.Upper_right, MD.Forward, 0)
         mecanumRobot.Motor(LR.Lower_left, MD.Forward, 0)
         mecanumRobot.Motor(LR.Upper_left, MD.Forward, 0)
     }
+
+
+
+    export function backward(){
+        mecanumRobot.Motor(LR.Lower_right, MD.Forward, speed)
+        mecanumRobot.Motor(LR.Upper_right, MD.Back, speed + 5)
+        mecanumRobot.Motor(LR.Lower_left, MD.Back, speed)
+        mecanumRobot.Motor(LR.Upper_left, MD.Forward, speed)
+        
+    }
+    export function basicRight(pause: number){
+        mecanumRobot.Motor(LR.Lower_right, MD.Forward, speed)
+        mecanumRobot.Motor(LR.Upper_right, MD.Back, speed + 2)
+        mecanumRobot.Motor(LR.Lower_left, MD.Forward, speed)
+        mecanumRobot.Motor(LR.Upper_left, MD.Back, speed)
+        turning = true
+        basic.pause(pause)
+        basicStop()
+    }
+    export function basicLeft(pause: number) {
+        mecanumRobot.Motor(LR.Lower_right, MD.Back, speed)
+        mecanumRobot.Motor(LR.Upper_right, MD.Forward, speed + 2)
+        mecanumRobot.Motor(LR.Lower_left, MD.Back, speed)
+        mecanumRobot.Motor(LR.Upper_left, MD.Forward, speed)
+        turning = true
+        basic.pause(pause)
+        basicStop()
+    }
+    export function basicStop() {
+        mecanumRobot.Motor(LR.Lower_right, MD.Forward, 0)
+        mecanumRobot.Motor(LR.Upper_right, MD.Forward, 0)
+        mecanumRobot.Motor(LR.Lower_left, MD.Forward, 0)
+        mecanumRobot.Motor(LR.Upper_left, MD.Forward, 0)
+    }
+
+
+
+
+
+
+
 
 
 
@@ -86,3 +135,4 @@ namespace CarControl {
     }
 
 }
+
