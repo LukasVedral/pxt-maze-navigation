@@ -1,6 +1,6 @@
 namespace CarControl {
-    const speed: number = 80
-    export const turnTime: number = 485
+    const speed: number = 85
+    export const turnTime: number = 440
     export let turning: boolean
     let lock: boolean
     
@@ -12,7 +12,7 @@ namespace CarControl {
             Track.dataForwardStart()
             lock = true
         }
-        mecanumRobot.Motor(LR.Lower_right, MD.Back, speed)
+        mecanumRobot.Motor(LR.Lower_right, MD.Back, speed + 4)
         mecanumRobot.Motor(LR.Upper_right, MD.Forward, speed + 5)
         mecanumRobot.Motor(LR.Lower_left, MD.Forward, speed)
         mecanumRobot.Motor(LR.Upper_left, MD.Back, speed)
@@ -64,7 +64,7 @@ namespace CarControl {
 
 
     export function backward(){
-        mecanumRobot.Motor(LR.Lower_right, MD.Forward, speed)
+        mecanumRobot.Motor(LR.Lower_right, MD.Forward, speed + 4)
         mecanumRobot.Motor(LR.Upper_right, MD.Back, speed + 5)
         mecanumRobot.Motor(LR.Lower_left, MD.Back, speed)
         mecanumRobot.Motor(LR.Upper_left, MD.Forward, speed)
@@ -134,5 +134,12 @@ namespace CarControl {
         return pins.digitalReadPin(frontRightSensor) === 0;
     }
 
+
+
+    export function setup(){
+        sensorSetup()
+        Track.dataArray = []
+        Track.possibleTrack = []
+    }
 }
 

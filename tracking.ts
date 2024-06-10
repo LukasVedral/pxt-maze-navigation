@@ -10,7 +10,7 @@ namespace Track{
     let forwardTime1: number;
     let forwardTime: number;
     let forwardTimeToStr: string;
-
+    export let isDeadEnd: boolean = false
 
     //if "1" just one possible way
     export let possibleTrack: Array<string> = []
@@ -50,6 +50,23 @@ namespace Track{
         }
     }
 
+    export function possibleTrackpush(lastItem: number){
+        
+        if (!isDeadEnd) {
+            if (!Solver.left && Solver.front > Solver.maxFrontDistance) {
+                possibleTrack[lastItem] = "lf"
+            }
+            if (!Solver.right) {
+                if (!Solver.left) {
+                    if (Solver.front > Solver.maxFrontDistance) {
+                        possibleTrack[lastItem] = "lrf"
+                    } else {
+                        possibleTrack[lastItem] = "lr"
+                    }
+                }
+            }
+        }
+    }
 
     //kdyz nararzi na slepou cestu vati se k posledni krizovatce
     export function deadEnd(){
@@ -74,19 +91,35 @@ namespace Track{
         }
 
         for (let i: number = possibleTrack.length - 1; possibleTrack[i] == "1"; i--) {
-            possibleTrack.splice(i, 1)
+            if (possibleTrack[possibleTrack.length - 1] == "1"){
+                possibleTrack.splice(i, 1)
+            }
         }
 
         //odebira z krizovatky slepou cestu
         if (possibleTrack[possibleTrack.length - 1] == "lf") {
             possibleTrack[possibleTrack.length - 1] = "f"
+            CarControl.forward()
+            basic.pause(500)
         } else if (possibleTrack[possibleTrack.length - 1] == "lrf") {
             possibleTrack[possibleTrack.length - 1] = "rf"
+            CarControl.forward()
+            basic.pause(500)
         } else if (possibleTrack[possibleTrack.length - 1] == "lr") {
             possibleTrack[possibleTrack.length - 1] = "r"
+            CarControl.rightTurn(CarControl.turnTime)
+            CarControl.forward()
+            basic.pause(500)
         } else if (possibleTrack[possibleTrack.length - 1] == "rf") {
             possibleTrack[possibleTrack.length - 1] = "r"
+            CarControl.rightTurn(CarControl.turnTime)
+            CarControl.forward()
+            basic.pause(500)
         }
+        
+        
+        isDeadEnd = true
+
     }
 
 
@@ -112,27 +145,36 @@ namespace Track{
     export let finishes: Array<PossibleFinishes> = []
 
     export function checkFinish(){
-        if (possibleTrack[possibleTrack.length - 1] == "lrf" && !Solver.right){
-            Solver.isSolved = true
-            CarControl.stop()
-            music.tonePlayable(Note.C, music.beat(BeatFraction.Whole))
-            let finalTime: number = 0
-            //vypocet celkoveho casu
-            for(let i: number = 0; i < dataArray.length; i++){
-                if (dataArray[i] == "r" || dataArray[i] == "l"){
-                    finalTime += CarControl.turnTime
-                }else{
-                    finalTime += parseInt(dataArray[i])
+        if (possibleTrack[possibleTrack.length - 1] == "lrf"){
+            CarControl.rightTurn(CarControl.turnTime)
+            Solver.update()
+            if (!Solver.right && !Solver.left && Solver.front > Solver.maxFrontDistance){
+                mecanumRobot.setLed(LedCount.Left, LedState.ON)
+                mecanumRobot.setLed(LedCount.Right, LedState.ON)
+                possibleTrack.splice(possibleTrack.length - 1, 1)//odstrani z possibleTrack cil
+                dataArray.splice(dataArray.length - 2, 2)//odstrani z dataArray cil
+                Solver.isSolved = true
+                CarControl.stop()
+                music.tonePlayable(Note.C, music.beat(BeatFraction.Whole))
+                let finalTime: number = 0
+                //vypocet celkoveho casu
+                for (let i: number = 0; i < dataArray.length; i++) {
+                    if (dataArray[i] == "r" || dataArray[i] == "l") {
+                        finalTime += CarControl.turnTime
+                    } else {
+                        finalTime += parseInt(dataArray[i])
+                    }
                 }
-            }
-            //jedna z cest s jejim casem
-            let finish: PossibleFinishes = {
-                time: finalTime,
-                way: dataArray
-            }
-            finishes.push(finish)
-            checkForOtherWays()
+                //jedna z cest s jejim casem
+                let finish: PossibleFinishes = {
+                    time: finalTime,
+                    way: dataArray
+                }
+                finishes.push(finish)
+                checkForOtherWays()
+            } else (CarControl.leftTurn(CarControl.turnTime))
         }
+
     }
 
 
